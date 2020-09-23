@@ -1,14 +1,15 @@
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render,get_object_or_404
+from django.template.loader import get_template
 from .models import Customer,Invoice
-# from .forms import CommentForm
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import View
 from .forms import InvoiceForm  
 from io import BytesIO
 from xhtml2pdf import pisa
+
 # from yourproject.utils import render_to_pdf
 
 
@@ -61,19 +62,18 @@ def render_to_pdf(template_src, context_dict={}):
 
 
 class GeneratePDF(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request, id, *args, **kwargs):
         invoice = Invoice.objects.get(id=id)
         total_price = 0
-        for products in invoice.product.all():
+        for product in invoice.products.all():
             total_price += product.price
-        context = {
-             'today': date.today(), 
+        context = { 
              'amount': total_price,
              'customer_name': invoice.customer.name,
-             'products': invoice.product.all,
+             'products': invoice.products.all,
              'order_id': invoice.id ,
         }
-        html = template.render(context)
+        # html = template.render(context)
         pdf = render_to_pdf('invoice_pdf.html', context)
         if pdf:
             return HttpResponse(pdf, content_type='application/pdf')
