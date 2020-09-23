@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+
+    .head_text{
+    color: white;
+  }
+    .card{
+    box-shadow: 0 16px 48px #E3E7EB;
+}
+</style>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 card mb-4  mt-3 left  top">
+      <div class="card-body">
+        <h1>{% block title %} {{ customer.name }} {% endblock title %}</h1>
+        <p class=" text-muted">{{ customer.phone }} | {{ customer.address }}</p>
+        <p class="card-text ">{{ customer.name }}</p>
+        
+        </div>
+        </div>
+        </div>
+        
+</div>
+
+        
+        {% endblock content %}

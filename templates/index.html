@@ -1,0 +1,77 @@
+ {% extends "base.html" %}
+      
+ {% block content %}
+<style>
+    
+    body {
+        font-family: "Roboto", sans-serif;
+        font-size: 18px;
+        background-color: #fdfdfd;
+    }
+
+    .head_text{
+    color: white;
+  }
+    .card{
+    box-shadow: 0 16px 48px #E3E7EB;
+}
+</style>
+
+    <header class="masthead" >
+            <div class="overlay"></div>
+            <div class="container">
+              <div class="row">
+                <div class=" col-md-8 col-md-10 mx-auto">
+                  <div class="site-heading">
+                    <h3 class=" site-heading my-4 mt-3 text-white"> Welcome to My Supermarket..!! </h3>
+                    <p class="text-light">Let's start shopping ? &nbsp
+                    </p>
+                </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+              </header>
+        
+            <div class="container">
+                <div class="row">
+      
+              <!-- Blog Entries Column -->
+              <div class="col-md-8 mt-3 left">
+                <h2>Customers List</h2>
+                    {% for customer in queryset %}
+                <div class="card mb-4" >
+                  <div class="card-body">
+                    <h2 class="card-title">{{ customer.name }}</h2>
+                    <p class="card-text text-muted h6">{{ customer.email }} | {{ customer.address}} </p>
+
+                    <p class="card-text">{{customer.phone }}</p>
+                    <a href="customer/{{customer.id}}" class="btn btn-primary">Show More</a>
+
+                  </div>
+                 
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-8 mt-3 left">
+              <h2>Invoices List</h2>
+                  {% for invoice in invoice %}
+              <div class="card mb-4" >
+                <div class="card-body">
+                  <h2 class="card-title">{{ invoice.created_on }}</h2>
+                  <p class="card-text text-muted h6">{{ invoice.products }} | {{ invoice.shipping_address}} </p>
+
+                  <p class="card-text">{{ invoice.customer }}</p>
+                  <a href="invoice/{{invoice.id}}" class="btn btn-primary">Show More</a>
+
+                </div>
+               
+              </div>
+              {% endfor %}
+          </div>
+                {% block sidebar %}
+                {% include 'sidebar.html' %}
+                {% endblock sidebar %}
+            </div>
+        </div>
+{%endblock%} 
