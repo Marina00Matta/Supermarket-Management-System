@@ -2,7 +2,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render,get_object_or_404
 from django.template.loader import get_template
-# from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from .models import Customer,Invoice
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -18,6 +20,7 @@ from xhtml2pdf import pisa
 
 # @login_required
 # if user.is.authenticated
+@login_required
 def Index(request):
     queryset = Customer.objects.filter(block_status=1).order_by('name')
     invoice = Invoice.objects.all().order_by('created_on')
@@ -38,18 +41,18 @@ def InvoiceDetail(request, id):
     template_name = 'invoice_details.html'
     return render(request, template_name,{'invoice': invoice})
 
-# def EmailInvoiceContent():
-#     invoice = Invoice.objects.latest()
-#     context = { 
-#              'customer_name': invoice.customer.name,
-#              'products': invoice.products.all,
-#              'address' : invoice.shipping_address,
-#              'created_on' : invoice.created_on,
-#         }   
-#     pdf = render_to_string('invoice_pdf.html', context)
-#     if pdf:
-#         return HttpResponse(pdf, content_type='application/pdf')
-#     return HttpResponse("404 Not Found")  
+#to send con
+
+def EmailInvoiceContent():
+    invoice = Invoice.objects.latest('created_on')
+    context = { 
+             'customer_name': invoice.customer.name,
+             'products': invoice.products.all,
+             'address' : invoice.shipping_address,
+             'created_on' : invoice.created_on,
+        }   
+    pdf = render_to_string('invoice_pdf.html', context)
+    return pdf  
     
 
 def CreateInvoice(request):  
@@ -57,18 +60,18 @@ def CreateInvoice(request):
         form = InvoiceForm(request.POST)  
         if form.is_valid():    
                 form.save()  
-                # reciept = EmailInvoiceContent()
-                # subject = 'My Supermarket - Thank you for your Order'
-                # html_message = 'Hey, this is your reciept for your order'
-                # # +reciept
-                # # plain_message = strip_tags(html_message)
-                # from_email = '69a7a7db2e-5b6044@inbox.mailtrap.io'
-                # to_email  = 'marinamedhat_19@hotmail.com'
+                reciept = EmailInvoiceContent()
                 subject = 'My Supermarket - Thank you for your Order'
-                body = 'That’s your message body'
-                from_email = settings.EMAIL_HOST_USER
-                to_email = ['marinamedhat_19@hotmail.com']
-                send_mail(subject,body,from_email ,to_email,fail_silently=True)
+                html_message = 'Hey, this is your reciept for your order'+reciept
+                plain_message = strip_tags(html_message)
+                from_email = '69a7a7db2e-5b6044@inbox.mailtrap.io'
+                to_email  = 'marinamedhat_19@hotmail.com'
+                send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+                # subject = 'My Supermarket - Thank you for your Order'
+                # body = 'That’s your message body'
+                # from_email = settings.EMAIL_HOST_USER
+                # to_email = ['marinamedhat_19@hotmail.com']
+                # send_mail(subject,body,from_email ,to_email,fail_silently=True)
                 
                 return redirect('/')  
               
