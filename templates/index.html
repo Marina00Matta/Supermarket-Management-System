@@ -55,6 +55,8 @@
             </div>
             <div class="col-md-8 mt-3 left">
               <h2>Invoices List</h2>
+              <a href="create" class="btn btn-success">CREATE A NEW INVOICE</a>
+
                   {% for invoice in invoice %}
               <div class="card mb-4" >
                 <div class="card-body">
@@ -63,7 +65,7 @@
 
                   <p class="card-text">{{ invoice.customer }}</p>
                   <a href="invoice/{{invoice.id}}" class="btn btn-primary">Show More</a>
-                  <a href="pdf" class="btn btn-primary">PDF</a>
+                  <a href="pdf/{{invoice.id}}" class="btn btn-danger">PDF</a>
 
 
                 </div>

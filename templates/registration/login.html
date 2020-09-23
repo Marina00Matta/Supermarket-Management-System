@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<header class="masthead" >
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class=" col-md-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h3 class=" site-heading my-4 mt-3 text-white"> Welcome to My Supermarket..!! </h3>
+            <p class="text-light">Login to start ? &nbsp
+            </p>
+        </div>
+            </div>
+          </div>
+        </div>
+    </div>
+      </header>
+    <div id="content-container" class="container p-none">
+        <div class="lgn-container col-lg-8">
+            <form id="login-form" method="post" 
+                  action="{% url 'login' %}">
+                {% csrf_token %}
+                <table class="table">
+                    <tr>
+                        <td><label for="id_username">Username</label></td>
+                        <td><input id="id_username" name="username" 
+                                   type="text" class="form-control"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="id_password">Password</label></td>
+                        <td><input id="id_password" name="password" 
+                                   type="password" class="form-control"></td>
+                    </tr>
+                </table>
+                {% if form.errors %}
+                    <p class=" label label-danger">
+                        check your username and password one more time something is wrong!!
+                    </p>
+                {% endif %}
+
+                <input type="submit" value="Login" 
+                       class="btn btn-primary pull-right" />
+            </form>
+        </div>
+    </div>
+{% endblock content %}

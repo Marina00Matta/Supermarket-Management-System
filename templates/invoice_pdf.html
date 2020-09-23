@@ -39,13 +39,18 @@
     <body>
         <div class='wrapper'>
             <div class='header'>
-                <p class='title'>Invoice # </p>
+                <p class='title'>My Supermarket </p>
             </div>
         <div>
         <div class='details'>
-            Bill to: {{ customer.name }} <br/>
-            Amount: {{ product.price }} <br/>
-            Date: {{ today }}
+            <h3>Customer Name : {{ customer_name }}</h3>
+            <h3>Shipping Address : {{ address }}</h3>
+           {% for product in products.all %}
+            <h4>Products: {{ product.name }}</h4>
+            <h4>Price:  {{product.price}}   </h4>
+            {% endfor %}
+            <h4>Total : {{ amount }}</h4>
+            <h4>Created at: {{ created_on }}</h4>
             <hr class='hrItem' />
         </div>
     </div>

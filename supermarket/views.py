@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render,get_object_or_404
 from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
 from .models import Customer,Invoice
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -10,26 +11,33 @@ from .forms import InvoiceForm
 from io import BytesIO
 from xhtml2pdf import pisa
 
-# from yourproject.utils import render_to_pdf
 
 
 # Create your views here.
+
+
+# {% if user.is.authenticated %}
+
 def Index(request):
     queryset = Customer.objects.filter(block_status=1).order_by('name')
     invoice = Invoice.objects.all().order_by('created_on')
     template_name = 'index.html' 
     return render(request, template_name, {'queryset':queryset,
                                             'invoice':invoice })
-
 def CustomerDetail(request, id):
     customer = get_object_or_404(Customer, id=id)
+    invoice = Invoice.objects.all().filter(customer_id = id)
     template_name = 'customer_details.html'
-    return render(request, template_name, {'customer': customer})    
+    return render(request, template_name, {'customer': customer,
+                                            'invoice': invoice
+                                                                })    
+
 
 def InvoiceDetail(request, id):
     invoice = get_object_or_404(Invoice, id=id)
     template_name = 'invoice_details.html'
     return render(request, template_name,{'invoice': invoice})
+
 
 def CreateInvoice(request):  
     if request.method == "POST":  
@@ -37,11 +45,13 @@ def CreateInvoice(request):
         if form.is_valid():  
             try:  
                 form.save()  
-                subject = 'Thank you for your Order'
-                message = 'we will be in touch'
+                reciept = EmailInvoiceContent()
+                subject = 'My Supermarket - Thank you for your Order'
+                html_message = 'Hey, this is your reciept for your order'+reciept
+                plain_message = strip_tags(html_message)
                 from_email = settings.EMAIL_HOST_USER
-                to_list = [settings.EMAIL_HOST_USER]
-                send_mail(subject,message,from_email ,to_list,fail_silently=True)
+                to_email  = 'marinamedhat_19@hotmail.com'
+                mail.send_mail(subject,plain_message,from_email ,to_email,html_message=html_message,fail_silently=False)
                 return redirect('/')  
             except:  
                 pass  
@@ -49,7 +59,6 @@ def CreateInvoice(request):
         form = InvoiceForm()  
     template_name = 'create.html'
     return render(request,template_name,{'form':form})  
-
 
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
@@ -67,15 +76,31 @@ class GeneratePDF(View):
         total_price = 0
         for product in invoice.products.all():
             total_price += product.price
+           
         context = { 
              'amount': total_price,
              'customer_name': invoice.customer.name,
              'products': invoice.products.all,
-             'order_id': invoice.id ,
+             'address' : invoice.shipping_address,
+             'created_on' : invoice.created_on,
         }
         # html = template.render(context)
         pdf = render_to_pdf('invoice_pdf.html', context)
         if pdf:
             return HttpResponse(pdf, content_type='application/pdf')
         return HttpResponse("404 Not Found")    
-        
+
+
+def EmailInvoiceContent():
+    invoice = Invoice.objects.latest()
+    context = { 
+             'customer_name': invoice.customer.name,
+             'products': invoice.products.all,
+             'address' : invoice.shipping_address,
+             'created_on' : invoice.created_on,
+        }   
+    pdf = render_to_string('invoice_pdf.html', context)
+    if pdf:
+        return HttpResponse(pdf, content_type='application/pdf')
+    return HttpResponse("404 Not Found")  
+    

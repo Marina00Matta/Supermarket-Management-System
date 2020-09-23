@@ -16,11 +16,28 @@
     box-shadow: 0 16px 48px #E3E7EB;
 }
 </style>
-<div class="container">
-  <div class="row">
+<header class="masthead" >
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class=" col-md-8 col-md-10 mx-auto">
+        <div class="site-heading">
+          <h3 class=" site-heading my-4 mt-3 text-white"> Welcome to My Supermarket..!! </h3>
+          <p class="text-light">Let's start shopping ? &nbsp
+          </p>
+      </div>
+          </div>
+        </div>
+      </div>
+  </div>
+    </header>
+
+  <div class="container">
+      <div class="row">
     <div class="col-md-8 card mb-4  mt-3 left  top">
       <div class="card-body">
-        <h1>{% block title %} {{ customer.name }} {% endblock title %}</h1>
+        <h1>Customer Details: </h1>
+        <h3>{% block title %} {{ customer.name }} {% endblock title %}</h3>
         <p class=" text-muted">{{ customer.phone }} | {{ customer.address }}</p>
         <p class="card-text ">{{ customer.name }}</p>
         
@@ -29,6 +46,24 @@
         </div>
         
 </div>
+<div class="col-md-8 mt-3 left">
+  <h2>Related Invoices</h2>
+      {% for invoice in invoice %}
+  <div class="card mb-4" >
+    <div class="card-body">
+      <h2 class="card-title">{{ invoice.created_on }}</h2>
+      <h2 class="card-text text-muted h6">{{ invoice.shipping_address}} </h2>
+      <h3 class=" text-muted">{% for product in invoice.products.all%} {{ product.name }} {% endfor %}</h3>
 
+      <h2 class="card-text">{{ invoice.customer }}</h2>
+      <a href="/invoice/{{invoice.id}}" class="btn btn-primary">Show More</a>
+      <a href= "/pdf/{{invoice.id}}" class="btn btn-primary">PDF</a>
+
+
+    </div>
+   
+  </div>
+  {% endfor %}
+</div>
         
         {% endblock content %}
